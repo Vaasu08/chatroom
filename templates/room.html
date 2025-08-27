@@ -33,18 +33,25 @@
     socketio.on("message",(data)=>{
         createMessage(data.name,data.message);
     })
-    const sendMessage = () => {
-        const message = document.getElementById("message")
-        if(message.value == "")return;
-        socketio.emit("message",{data: message.value})
-        message.value = "";
+var socketio = io({
+    auth: {
+        name: "{{ session['name'] }}",
+        room: "{{ session['room'] }}"
     }
-    document.getElementById("message").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // prevent form submission / newline
-            sendMessage();
-        }
+});
+
+const sendMessage = () => {
+    const messageInput = document.getElementById("message");
+    if (messageInput.value == "") return;
+
+    socketio.emit("message", {
+        data: messageInput.value,
+        name: "{{ session['name'] }}",
+        room: "{{ session['room'] }}"
     });
+
+    messageInput.value = "";
+};
 
 </script>
 <script>
